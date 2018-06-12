@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ArcadeGame
@@ -14,10 +15,12 @@ namespace ArcadeGame
             int startX = Map.WIDTH / 2;
             Car c = new Car(startX);
 
+            //Main game loop
             while (true)
             {
+                
                 Move(c);
-                Console.Clear();
+                Console.SetCursorPosition(0,0); // instead of Console.Clear()
                 GraphicUpdate();
             }
         }
@@ -32,27 +35,27 @@ namespace ArcadeGame
 
         public static void Move(Car c)
         {
-            char direction = Convert.ToChar(Console.ReadKey(true).Key);
-            switch (direction)
+            // Because of that the console stops executing the thread, we do the input in another thread
+            new Thread(() =>
             {
-                case 'A':
-                    {
-                        c.X--;
-                        ChengeSymb(c.X, true);
-                        break;
-                    }
-                case 'D':
-                    {
-                        c.X++;
-                        ChengeSymb(c.X, false);
-                        break;
-                    }
-            }
+                Thread.CurrentThread.IsBackground = true;
+                ConsoleKey direction = Console.ReadKey(true).Key;
+                if (direction == ConsoleKey.LeftArrow || direction == ConsoleKey.A)
+                {
+                    c.X--;
+                    ChengeSymb(c.X, true);
+                }
+                else if (direction == ConsoleKey.RightArrow || direction == ConsoleKey.D)
+                {
+                    c.X++;
+                    ChengeSymb(c.X, false);
+                }
+            }).Start();
         }
 
         public static void ChengeSymb(int position, bool leftDir)
         {
-            string t = Map.map[Map.HEIGHT - 2];
+            string t = Map.map[Map.HEIGHT - 2]; 
             char[] chars = t.ToCharArray();
             chars[position] = '#';
             if (leftDir)
