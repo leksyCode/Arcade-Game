@@ -11,17 +11,28 @@ namespace ArcadeGame
     {
 
         static void Main(string[] args)
-        {
+        {          
             int startX = Map.WIDTH / 2;
-            Car c = new Car(startX);
-
+            Car car = new Car(startX);
+            CreateEnemy();
             //Main game loop
             while (true)
             {
+                for (int i = 0; i < countEnemies; i++)
+                {
+                    if (listEnimies[i].Y > Map.HEIGHT - 2)
+                    {
+                        listEnimies.Clear();
+                        CreateEnemy();
+                    }
+                }
                 
-                Move(c);
-                Console.SetCursorPosition(0,0); // instead of Console.Clear()
+                Move(car);
+                MoveEnemies();
+                Console.SetCursorPosition(0, 0); // instead of Console.Clear()
                 GraphicUpdate();
+                DrawEnemies();
+              
             }
         }
 
@@ -42,12 +53,12 @@ namespace ArcadeGame
                 ConsoleKey direction = Console.ReadKey(true).Key;
                 if (direction == ConsoleKey.LeftArrow || direction == ConsoleKey.A)
                 {
-                    c.X--;
+                    c.X -= 2;
                     ChengeSymb(c.X, true);
                 }
                 else if (direction == ConsoleKey.RightArrow || direction == ConsoleKey.D)
                 {
-                    c.X++;
+                    c.X += 2;
                     ChengeSymb(c.X, false);
                 }
             }).Start();
@@ -55,18 +66,59 @@ namespace ArcadeGame
 
         public static void ChengeSymb(int position, bool leftDir)
         {
-            string t = Map.map[Map.HEIGHT - 2]; 
+            string t = Map.map[Map.HEIGHT - 2];
             char[] chars = t.ToCharArray();
             chars[position] = '#';
             if (leftDir)
             {
-                chars[position + 1] = ' ';
+                chars[position + 2] = ' ';
             }
             else
             {
-                chars[position - 1] = ' ';
+                chars[position - 2] = ' ';
             }
             Map.map[Map.HEIGHT - 2] = new string(chars);
+        }
+
+        public static void ChengeEnemiesSymb(Enemy enemy)
+        {
+            string t = Map.map[enemy.Y];
+            string lastStr = Map.map[enemy.Y - 1];
+            char[] chars2 = lastStr.ToCharArray();
+            char[] chars = t.ToCharArray();
+            chars2[enemy.X] = ' ';
+            chars[enemy.X] = '#';
+            Map.map[enemy.Y-1] = new string(chars2);
+            Map.map[enemy.Y] = new string(chars);
+        }
+
+        static List<Enemy> listEnimies;
+        static  Random rand = new Random(DateTime.Now.Millisecond);
+        static int countEnemies;
+
+        public static void CreateEnemy()
+        {
+            countEnemies = rand.Next(2, 6);
+            listEnimies = new List<Enemy>();
+            for (int i = 0; i < countEnemies; i++)
+            {
+                listEnimies.Add(new Enemy());
+            }
+        }
+
+        public static void MoveEnemies()
+        {
+            foreach (var enemy in listEnimies)
+            {
+                enemy.Y++;
+            }
+        }
+        public static void DrawEnemies()
+        {
+            foreach (var enemy in listEnimies)
+            {
+                ChengeEnemiesSymb(enemy);   
+            }
         }
     }
 }

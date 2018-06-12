@@ -21,10 +21,20 @@ namespace ArcadeGame
                 else x = value;
             }
         }
+        public int Health { get; set; } = 100;
 
         public Car(int x)
         {
             X = x;
+        }
+
+        public bool IsAlive()
+        {
+            if (Health > 0)
+            {
+                return true;
+            }
+            return false;
         }
 
     }
