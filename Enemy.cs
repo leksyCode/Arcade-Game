@@ -8,9 +8,10 @@ namespace ArcadeGame
 {
     class Enemy
     {
-      
+        static Random rand = new Random(DateTime.Now.Millisecond);
         private int y;
         public int X { get; set; }
+        public int X2 { get; set; }
 
         public int Y
         {
@@ -26,14 +27,18 @@ namespace ArcadeGame
                 }
                 else
                 {
-                    y = 2;
+                    y = 0;
                 }
-                        } }
-        public Enemy ()
+            }
+        }
+        public Enemy()
         {
-            Random rand = new Random();
-            y = 2;
-            X = rand.Next(1,Map.WIDTH-2);
+            y = 0;
+            while (X % 2 == 0)
+            {
+                X = rand.Next(1, Map.WIDTH - 2);
+                X2 = X + 1;
+            }
         }
     }
 }

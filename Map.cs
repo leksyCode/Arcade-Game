@@ -11,7 +11,7 @@ namespace ArcadeGame
         public static int WIDTH = 30, HEIGHT = 20;
         public static string[] map = new string[]
             {
-                "##############################",
+                "#                            #",
                 "#                            #",
                 "#                            #",
                 "#                            #",
